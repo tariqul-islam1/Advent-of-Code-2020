@@ -25,19 +25,20 @@ public class Main {
                 String next = fileContent.next();
                 String[] parts = next.split(" ");
                 String[] minMax = parts[0].split("-");
-                int min = Integer.valueOf(minMax[0]);
-                int max = Integer.valueOf(minMax[1]);
-                char c =  parts[1].charAt(0);
-                
+                int min = Integer.valueOf(minMax[0]) - 1;
+                int max = Integer.valueOf(minMax[1]) - 1;
+                char c = parts[1].charAt(0);
+
                 int occurance = 0;
-                for(char a : parts[2].toCharArray()){
-                    if(a == c){
+                for (int i : new int[]{min, max}) {
+                    if (parts[2].charAt(i) == c) {
                         occurance++;
                     }
                 }
-                if(occurance >= min && occurance <= max){
+                if (occurance == 1) {
                     correct++;
                 }
+
             }
             System.out.println("" + correct);
             
