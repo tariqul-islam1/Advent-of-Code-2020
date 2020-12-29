@@ -15,37 +15,44 @@ import java.util.Scanner;
  */
 public class Main {
 
+    static int countOfTrees = 0;
 
-    
     public static void main(String... args) {
-        try{
+        try {
             Scanner fileContent = new Scanner(new File("src/main/java/com/appland/java1/input.txt")).useDelimiter("\\n");
-            int correct = 0;
+            int locationNow = 3;
+            boolean shouldIncreaseByThree = false;
+            int numberOfTrees = 0;
+            String line = fileContent.next();
+            //System.out.println(line);
             while (fileContent.hasNext()) {
-                String next = fileContent.next();
-                String[] parts = next.split(" ");
-                String[] minMax = parts[0].split("-");
-                int min = Integer.valueOf(minMax[0]) - 1;
-                int max = Integer.valueOf(minMax[1]) - 1;
-                char c = parts[1].charAt(0);
-
-                int occurance = 0;
-                for (int i : new int[]{min, max}) {
-                    if (parts[2].charAt(i) == c) {
-                        occurance++;
-                    }
+                line = fileContent.next();
+                if (shouldIncreaseByThree) {
+                    line = getUpdatedLine(line, locationNow);
+                    locationNow = (locationNow + 3) % line.trim().length();
+                    shouldIncreaseByThree = false;
+                } else {
+                    shouldIncreaseByThree = true;
+                    line = getUpdatedLine(line, locationNow);
+                    locationNow = (locationNow + 3) % line.trim().length();
                 }
-                if (occurance == 1) {
-                    correct++;
-                }
-
+                //System.out.println(line);
+                //System.out.println("Location now: " + locationNow + ", " + line.charAt(locationNow));
             }
-            System.out.println("" + correct);
-            
-        } catch (FileNotFoundException fnfe){
+            System.out.println("" + countOfTrees);
+
+        } catch (FileNotFoundException fnfe) {
         }
-        
-        
+
+    }
+
+    static String getUpdatedLine(String line, int location) {
+        if (line.charAt(location) == '#') {
+            countOfTrees++;
+            return line.substring(0, location) + 'X' + line.substring(location + 1);
+        } else {
+            return line.substring(0, location) + 'O' + line.substring(location + 1);
+        }
     }
 
 }
