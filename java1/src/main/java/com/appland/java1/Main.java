@@ -71,12 +71,6 @@ public class Main {
             return true;
         }
         return false;
-//        if (line.charAt(location) == '#') {
-//            countOfTrees++;
-//            return line.substring(0, location) + 'X' + line.substring(location + 1);
-//        } else {
-//            return line.substring(0, location) + 'O' + line.substring(location + 1);
-//        }
     }
 
 }
