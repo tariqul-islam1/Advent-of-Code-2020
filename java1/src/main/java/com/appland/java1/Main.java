@@ -7,7 +7,7 @@ package com.appland.java1;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -16,61 +16,69 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static void main(String... args) {
-        int[] rightValues = new int[]{1, 3, 5, 7, 1};
-        int[] downValues = new int[]{1, 1, 1, 1, 2};
-        int[] countOfTrees = new int[rightValues.length];
-        long treesMultiply = 1;
+    public static void main(String... args) throws FileNotFoundException {
+        Scanner fileContent = new Scanner(new File("src/main/java/com/appland/java1/input.txt")).useDelimiter("\\n");
 
-        for (int i = 0; i < rightValues.length; i++) {
-            countOfTrees[i] = getCountOfTrees(rightValues[i], downValues[i]);
-        }
-        for (int n : countOfTrees) {
-            treesMultiply = treesMultiply * n;
-        }
-        System.out.println("" + Arrays.toString(countOfTrees));
-        System.out.println("" + treesMultiply);
+        System.out.println("" + getValidPassportCount(fileContent));
     }
 
-    static int getCountOfTrees(int nextRight, int nextDown) {
-        int trees = 0;
-        try {
-            Scanner fileContent = new Scanner(new File("src/main/java/com/appland/java1/input.txt")).useDelimiter("\\n");
-            int locationNow = 0;
-            boolean shouldIncreaseByThree = false;
-            int numberOfTrees = 0;
-            String line = fileContent.next();
-//            System.out.println(line);
-            while (fileContent.hasNext()) {
-                locationNow = (locationNow + nextRight) % line.trim().length();
-                line = getNextLine(fileContent, nextDown);
-                if (isTreeFound(line, locationNow)) {
-                    trees++;
+    static int getValidPassportCount(Scanner fileContent) {
+                / boolean isNewPassport;
+        int count = 0;
+        ArrayList<String> passport = new ArrayList<>();
+        StringBuilder exact = new StringBuilder();
+        while (fileContent.hasNext()) {
+            String line = fileContent.nextLine();
+            isNewPassport = line.equals("");
+            if (!isNewPassport) {
+                exact.append("\n" + line);
+                String[] fields = line.split(" ");
+                for (String f : fields) {
+                    passport.add(f);
                 }
-//                System.out.println(line);
-                //System.out.println("Location now: " + locationNow + ", " + line.charAt(locationNow));
+
+            } else {
+                if (isPassportValid(passport)) {
+                    count++;
+                }
+                passport = new ArrayList<>();
+                exact.setLength(0);
             }
-            //System.out.println("" + countOfTrees);
-
-        } catch (FileNotFoundException fnfe) {
         }
-        return trees;
+        //we didn't check the last passport
+        if (isPassportValid(passport)) {
+            count++;
+        }
+        return count;
     }
 
-    static String getNextLine(Scanner fileContent, int nextDown) {
-        int downCount = 0;
-        String line = "";
-        while (fileContent.hasNext() && ++downCount <= nextDown) {
-            line = fileContent.next();
+    private static boolean isPassportValid(ArrayList<String> passport) {
+        ArrayList<String> fields = new ArrayList<>();
+        for (String field : passport) {
+            fields.add(field.split(":")[0]);
         }
-        return line;
+        //check if all the required fields are available
+        ArrayList<String> validFields = getValidFields();
+        for (String vf : validFields) {
+            if (!fields.contains(vf)) {
+                return false;
+            }
+        }
+        //
+        return true;
     }
 
-    static boolean isTreeFound(String line, int location) {
-        if (line.charAt(location) == '#') {
-            return true;
-        }
-        return false;
+    private static ArrayList<String> getValidFields() {
+        ArrayList<String> validFields = new ArrayList<>();
+        validFields.add("byr");
+        validFields.add("iyr");
+        validFields.add("eyr");
+        validFields.add("hgt");
+        validFields.add("hcl");
+        validFields.add("ecl");
+        validFields.add("pid");
+//        validFields.add("cid");
+        return validFields;
     }
 
 }
