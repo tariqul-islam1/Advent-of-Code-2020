@@ -23,7 +23,7 @@ public class Main {
     }
 
     static int getValidPassportCount(Scanner fileContent) {
-                / boolean isNewPassport;
+        boolean isNewPassport;
         int count = 0;
         ArrayList<String> passport = new ArrayList<>();
         StringBuilder exact = new StringBuilder();
@@ -64,7 +64,60 @@ public class Main {
                 return false;
             }
         }
-        //
+        //validate the fields
+        for (String p : passport) {
+            String key = p.split(":")[0];
+            String value = p.split(":")[1];
+            switch (key) {
+                case "byr":
+                    if (value.length() != 4 || Integer.valueOf(value) < 1920 || Integer.valueOf(value) > 2002) {
+                        return false;
+                    }
+                    break;
+                case "iyr":
+                    if (value.length() != 4 || Integer.valueOf(value) < 2010 || Integer.valueOf(value) > 2020) {
+                        return false;
+                    }
+                    break;
+                case "eyr":
+                    if (value.length() != 4 || Integer.valueOf(value) < 2020 || Integer.valueOf(value) > 2030) {
+                        return false;
+                    }
+                    break;
+                case "hgt":
+                    String unit = value.substring(value.length() - 2, value.length());
+                    int reading = Integer.valueOf(value.substring(0, value.length() - 2));
+                    if (unit.equals("cm")) {
+                        if (reading < 150 || reading > 193) {
+                            return false;
+                        }
+                    } else if (unit.equals("in")) {
+                        if (reading < 59 || reading > 76) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                    break;
+                case "hcl":
+                    if (!value.matches("^[#][\\da-f]{6}")) {
+                        return false;
+                    }
+                    break;
+                case "ecl":
+                    if (!getEyeColors().contains(value)) {
+                        return false;
+                    }
+                    break;
+                case "pid":
+                    if (!value.matches("[0\\d]{9}")) {
+                        return false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
         return true;
     }
 
@@ -79,6 +132,19 @@ public class Main {
         validFields.add("pid");
 //        validFields.add("cid");
         return validFields;
+    }
+
+    private static ArrayList<String> getEyeColors() {
+        //amb blu brn gry grn hzl oth
+        ArrayList<String> validColors = new ArrayList<>();
+        validColors.add("amb");
+        validColors.add("blu");
+        validColors.add("brn");
+        validColors.add("gry");
+        validColors.add("grn");
+        validColors.add("hzl");
+        validColors.add("oth");
+        return validColors;
     }
 
 }
