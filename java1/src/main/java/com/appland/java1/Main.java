@@ -7,6 +7,8 @@ package com.appland.java1;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -23,6 +25,7 @@ public class Main {
 
     private static String getHighestSeatId(Scanner fileContent) {
         int seatId = -1;
+        ArrayList<Integer> ids = new ArrayList<>();
 
         while (fileContent.hasNext()) {
             int f = 0;
@@ -49,9 +52,21 @@ public class Main {
             if (seatId < ((f * 8) + l)) {
                 seatId = (f * 8) + l;
             }
+            ids.add((f * 8) + l);
+//            System.out.println("seat id: " + ((f * 8) + l));
 
         }
 
+        Collections.sort(ids);
+        //System.out.println("seat ids: " + ids.toString());
+        int prev = 0;
+        for (int i = 0; i < ids.size(); i++) {
+            if (prev + 1 == ids.get(i) - 1) {
+                return "" + (prev + 1);
+            } else {
+                prev = ids.get(i);
+            }
+        }
         return "" + seatId;
     }
 
